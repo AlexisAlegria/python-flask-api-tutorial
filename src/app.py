@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import json
 app = Flask(__name__)
 
 todos = [
@@ -9,8 +10,16 @@ todos = [
 @app.route('/todos', methods=['POST'])
 def add_new_todo():
     request_body = request.data
+    decoded_object = json.loads(request_body)
+    todos.append(decoded_object)
     print("Incoming request with the following body", request_body)
-    return 'Response for the POST todo'
+    return jsonify(todos), 200
+
+@app.route('/todos/<int:position>', methods=['DELETE'])
+def delete_todo(position):
+    print("This is the position to delete: ", position)
+    del todos[position]
+    return jsonify(todos), 200
 
 @app.route('/todos', methods=['GET'])
 def hello_world():
